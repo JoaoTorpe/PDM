@@ -19,8 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,11 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapp.model.City
 import androidx.compose.foundation.lazy.items
+import com.example.weatherapp.MainViewModel
 
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun ListPage(modifier: Modifier = Modifier) {
-    val cityList = remember { getCities().toMutableStateList() }
+fun ListPage(modifier: Modifier = Modifier, viewModel: MainViewModel ) {
+    val cityList = viewModel.cityList
     val activity = LocalContext.current as? Activity
     LazyColumn(
         modifier = modifier
@@ -41,7 +40,7 @@ fun ListPage(modifier: Modifier = Modifier) {
     ) {
         items(cityList, key = { it.name }) { city ->
             CityItem(city = city, onClose = {
-                Toast.makeText(activity, "Item ${city.name} fechado", Toast.LENGTH_LONG).show()
+                viewModel.remove(city)
             }, onClick = {
                 Toast.makeText(activity, "Item ${city.name} selecionado", Toast.LENGTH_LONG).show()
             })
@@ -55,7 +54,8 @@ fun CityItem(
     city: City,
     onClick: () -> Unit,
     onClose: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+
 ) {
     Row(
         modifier = modifier.fillMaxWidth().padding(8.dp).clickable { onClick() },
@@ -81,6 +81,3 @@ fun CityItem(
 }
 
 
-private fun getCities() = List(20) { i ->
-    City(name = "Cidade $i", weather = "Carregando clima...")
-}
