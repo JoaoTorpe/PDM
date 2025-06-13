@@ -54,6 +54,7 @@ class RegisterActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun RegisterPage(modifier: Modifier = Modifier) {
+    var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordRepeat by rememberSaveable { mutableStateOf("") }
@@ -74,6 +75,14 @@ fun RegisterPage(modifier: Modifier = Modifier) {
             modifier = modifier.fillMaxWidth(fraction = 0.9f),
             onValueChange = { email = it }
         )
+
+        OutlinedTextField(
+            value = name,
+            label = { Text(text = "Digite seu nome") },
+            modifier = modifier.fillMaxWidth(fraction = 0.9f),
+            onValueChange = { name = it }
+        )
+
 
         OutlinedTextField(
             value = password,
