@@ -113,7 +113,7 @@ fun RegisterPage(modifier: Modifier = Modifier) {
             }
             Spacer(modifier = modifier.size(24.dp))
             Button(
-                onClick = { email = ""; password = "";passwordRepeat="" }
+                onClick = { email = ""; password = "";passwordRepeat="";name=""}
             ) {
                 Text("Limpar")
             }
