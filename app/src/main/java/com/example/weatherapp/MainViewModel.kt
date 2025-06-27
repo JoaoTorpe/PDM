@@ -6,7 +6,7 @@ import com.example.weatherapp.model.City
 import com.google.android.gms.maps.model.LatLng
 
 class MainViewModel : ViewModel() {
-    private val _cities = getCities().toMutableStateList()
+    val _cities = getCities().toMutableStateList()
     val cityList get() = _cities.toList()
     fun remove(city: City) {
         _cities.remove(city)
