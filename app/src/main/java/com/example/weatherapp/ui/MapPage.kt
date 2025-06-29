@@ -52,7 +52,7 @@ fun MapPage(viewModel: MainViewModel) {
             cameraPositionState = camPosState, properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
             uiSettings = MapUiSettings(myLocationButtonEnabled = true)
             ) {
-            viewModel._cities.forEach {
+            viewModel.cities.forEach {
                 if (it.location != null) {
                     Marker( state = MarkerState(position = it.location),
                         title = it.name, snippet = "${it.location}")

@@ -34,28 +34,29 @@ import com.example.weatherapp.ui.nav.Route
 import com.example.weatherapp.ui.theme.WeatherAppTheme
 import androidx.navigation.NavDestination.Companion.hasRoute
 import android.Manifest
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weatherapp.db.fb.FBDatabase
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 class MainActivity : ComponentActivity() {
-
-
-
-
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var showDialog by remember { mutableStateOf(false) }
-            val viewModel : MainViewModel by viewModels()
+            val fbDB = remember { FBDatabase() }
+            val viewModel : MainViewModel = viewModel(
+                factory = MainViewModelFactory(fbDB)
+            )
             val navController = rememberNavController()
+            var showDialog by remember { mutableStateOf(false) }
             val currentRoute = navController.currentBackStackEntryAsState()
             val showButton = currentRoute.value?.destination?.hasRoute(Route.List::class) == true
-            val launcher = rememberLauncherForActivityResult(contract =
-                ActivityResultContracts.RequestPermission(), onResult = {} )
-
-
+            val launcher = rememberLauncherForActivityResult(
+                contract =
+                    ActivityResultContracts.RequestPermission(), onResult = {})
             WeatherAppTheme {
                 if (showDialog) CityDialog(
                     onDismiss = { showDialog = false },
@@ -63,18 +64,17 @@ class MainActivity : ComponentActivity() {
                         if (city.isNotBlank()) viewModel.add(city)
                         showDialog = false
                     })
-
                 Scaffold(
                     topBar = {
                         TopAppBar(
                             title = {
-                                val name = viewModel.user?.name?:"[não logado]"
+                                val name = viewModel.user?.name?: "[não logado]"
                                 Text("Bem-vindo/a! $name")
                             },
                             actions = {
-                                IconButton( onClick = {
+                                IconButton(onClick = {
                                     Firebase.auth.signOut()
-                                    } ) {
+                                }) {
                                     Icon(
                                         imageVector =
                                             Icons.AutoMirrored.Filled.ExitToApp,
@@ -84,7 +84,6 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     },
-
                     bottomBar = {
                         val items = listOf(
                             BottomNavItem.HomeButton,
@@ -92,11 +91,8 @@ class MainActivity : ComponentActivity() {
                             BottomNavItem.MapButton,
 
                             )
-
                         BottomNavBar(navController = navController, items)
-
                     },
-
                     floatingActionButton = {
                         if (showButton) {
                             FloatingActionButton(onClick = { showDialog = true }) {
@@ -107,7 +103,7 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
                         launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                        MainNavHost(navController = navController, viewModel = viewModel)
+                        MainNavHost(navController = navController, viewModel)
                     }
                 }
             }
