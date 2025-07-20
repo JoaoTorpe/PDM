@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapp.model.City
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
 import com.example.weatherapp.MainViewModel
 
 
@@ -43,6 +44,12 @@ fun ListPage(
             .padding(8.dp)
     ) {
         items(cityList, key = { it.name }) { city ->
+            LaunchedEffect(city.name) {
+                if (city.weather == null) {
+                    viewModel.loadWeather(city.name)
+                }
+            }
+
             CityItem(city = city, onClose = {
                 viewModel.remove(city)
                 Toast.makeText(activity, "${city.name} removida", Toast.LENGTH_SHORT).show()
@@ -80,7 +87,7 @@ fun CityItem(
             )
             Text(
                 modifier = Modifier,
-                text = city.weather ?: "Carregando clima...",
+                text = city.weather?.desc?:"carregando...",
                 fontSize = 16.sp
             )
         }
