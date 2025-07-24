@@ -27,7 +27,10 @@ import androidx.compose.ui.unit.sp
 import com.example.weatherapp.model.City
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.res.painterResource
+import coil.compose.AsyncImage
 import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.R
 import com.example.weatherapp.ui.nav.Route
 
 
@@ -77,10 +80,13 @@ fun CityItem(
             .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            Icons.Rounded.FavoriteBorder,
-            contentDescription = ""
+        AsyncImage(
+            model = city.weather?.imgUrl,
+            modifier = Modifier.size(75.dp),
+            error = painterResource(id = R.drawable.loading),
+            contentDescription = "Imagem"
         )
+
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = modifier.weight(1f)) {
             Text(
