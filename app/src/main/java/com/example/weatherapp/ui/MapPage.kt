@@ -1,6 +1,7 @@
 package com.example.weatherapp.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -16,7 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getDrawable
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.scale
 import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.R
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -27,6 +32,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun MapPage(viewModel: MainViewModel) {
     Column(
@@ -60,9 +66,23 @@ fun MapPage(viewModel: MainViewModel) {
                             viewModel.loadWeather(it.name)
                         }
                     }
+                    LaunchedEffect(it.weather) {
+                        if (it.weather != null && it.weather!!.bitmap == null) {
+                            viewModel.loadBitmap(it.name)
+                        }
+                    }
+                    val image = it.weather?.bitmap ?:
+                    getDrawable(context, R.drawable.loading)!!
+                        .toBitmap()
+                    val marker = BitmapDescriptorFactory
+                        .fromBitmap(image.scale(120,120))
                     Marker( state = MarkerState(position = it.location),
-                        title = it.name, snippet = it.weather?.desc?:"Carregando...")
+                        title = it.name,
+                        icon = marker,
+                        snippet = it.weather?.desc?:"Carregando..."
+                    )
                 }
+
             }
 
 
